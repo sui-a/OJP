@@ -2,18 +2,15 @@
 #include <unistd.h>
 #include <time.h>
 #include "log/log.hpp"
+#include "compile/compiler.hpp"
+
 int main()
 {
-    srand((unsigned int)time(NULL));
-    //进行日志系统测试
-    std::cout << "日志系统文件测试开始: " << std::endl;
-    suiLogSetFile("log.txt");
-    suiLogInit("webServerLog");
-    std::cout << "开始循环" << std::endl;
-    for (int i = 0; i < 10000; ++i)
-    {
-        suiLog(sui::logLevel::debug) << "这是的第 " << i << " 条日志";
-        sleep(rand() % 3);
-    }
+    //进行目录初始化工具测试
+    suiLogInit("编译服务器测试程序");
+    sui::Compiler com("8080");
+    int a = 0;
+    std::cin >> a;
+    com.compile("main.cpp", "main.out");
     return 0;
 }

@@ -177,10 +177,9 @@ logController::logStreamer::logStreamer(logController *parent, logLevel level, c
     : _parnet(parent)
 {
     // 进行日志头构造
-    auto filename = parent->getName();
     //[程序名][文件名][行号][日志等级][时间]:
     _logString = "[" + _parnet->getName() + "]";
-    _logString += "[" + filename + "]";
+    _logString += "[" + std::string(file) + "]";
     _logString += "[" + std::to_string(line) + "]";
     _logString += "[" + LeToS(level) + "]";
     // 获取时间
@@ -189,7 +188,6 @@ logController::logStreamer::logStreamer(logController *parent, logLevel level, c
 
 logController::logStreamer::~logStreamer()
 {
-    std::cout << "进入析构" << std::endl;
     _logString += "\n";
     _parnet->logOutPut(_logString);
 }

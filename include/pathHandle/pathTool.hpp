@@ -15,5 +15,8 @@ namespace sui
         
         //进行路径创建
         static bool createPaths(const std::string& path);
+
+        //工作目录初始化
+        static bool pathInit(const std::string &path);
     };
 }

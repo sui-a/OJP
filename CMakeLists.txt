@@ -21,11 +21,12 @@ file(GLOB_RECURSE WEBSERVER "src/webServer/*.cpp")
 file(GLOB_RECURSE LOG "src/log/*.cpp")
 file(GLOB_RECURSE FILEHANDLE "src/fileHandle/*.cpp")
 file(GLOB_RECURSE PATHHANDLE "src/pathHandle/*.cpp")
+file(GLOB_RECURSE COMPILESERVER "src/compileServer/*.cpp")
 
 
 # 生成可执行程序
-add_executable(compileServer ${COMPILE} ${LOG} ${PATHHANDLE} ${FILEHANDLE})
-add_executable(webServer ${WEBSERVER} ${LOG} ${FILEHANDLE} ${PATHHANDLE})
+add_executable(compileServer ${COMPILE} ${LOG} ${PATHHANDLE} ${FILEHANDLE} ${COMPILESERVER})
+add_executable(webServer ${WEBSERVER} ${LOG} ${FILEHANDLE} ${PATHHANDLE} ${COMPILE})
 
 # 连接线程库
 target_link_libraries(compileServer 

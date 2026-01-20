@@ -1,6 +1,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <cstring>
+#include <iostream>
+#include <dirent.h>
 #include "pathHandle/pathTool.hpp"
 
 bool sui::pathTool::isPathExist(const std::string &path)
@@ -42,5 +45,65 @@ bool sui::pathTool::createPaths(const std::string &path)
         if (errno != EEXIST)
             return false;
     }
+    return true;
+}
+
+bool sui::pathTool::pathInit(const std::string &path)
+{
+    //
+    // 1. 打开目录
+    std::cout << "进入" << path << "路径进行删除 " << std::endl;
+    DIR *dir = opendir(path.c_str());
+    if (dir == nullptr)
+    {
+        // 目录不存在或是无法打开 直接返回
+        return false;
+    }
+
+    struct dirent *entry;
+    // 2. 循环读取目录项
+    while ((entry = readdir(dir)) != nullptr)
+    {
+        // 1. 严格跳过 . 和 ..
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+        {
+            continue;
+        }
+
+        std::string fullPath = path + "/" + entry->d_name;
+        struct stat statbuf;
+        
+        if (lstat(fullPath.c_str(), &statbuf) == -1)
+        {
+            perror("lstat error");
+            continue;
+        }
+
+        // 2. 判断类型
+        if (S_ISDIR(statbuf.st_mode))
+        {
+            // 如果是目录：先递归清空它里面的东西
+            pathInit(fullPath); 
+            
+            // 【关键修改】：递归回来后，子目录已空，必须调用 rmdir 把它删掉
+            // 这样才能达到“全部删除”的效果
+            if (rmdir(fullPath.c_str()) != 0)
+            {
+                perror("rmdir child dir error");
+            }
+        }
+        else
+        {
+            // 如果是文件或软链接：直接删除
+            if (unlink(fullPath.c_str()) != 0)
+            {
+                perror("unlink error");
+                continue;
+            }
+        }
+    }
+
+    // 5. 关闭目录句柄
+    closedir(dir);
     return true;
 }
