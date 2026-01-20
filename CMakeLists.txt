@@ -16,12 +16,16 @@ include_directories(include)
 find_package(Threads REQUIRED)
 
 # 找到所有的源文件（递归搜索 src 目录下所有 .cpp）
-file(GLOB_RECURSE COMPILESOURCES "src/compile/*.cpp")
-file(GLOB_RECURSE WEBSERVERSOURCES "src/webServer/*.cpp")
+file(GLOB_RECURSE COMPILE "src/compile/*.cpp")
+file(GLOB_RECURSE WEBSERVER "src/webServer/*.cpp")
+file(GLOB_RECURSE LOG "src/log/*.cpp")
+file(GLOB_RECURSE FILEHANDLE "src/fileHandle/*.cpp")
+file(GLOB_RECURSE PATHHANDLE "src/pathHandle/*.cpp")
+
 
 # 生成可执行程序
-add_executable(compileServer ${COMPILESOURCES})
-add_executable(webServer ${WEBSERVERSOURCES})
+add_executable(compileServer ${COMPILE} ${LOG} ${PATHHANDLE} ${FILEHANDLE})
+add_executable(webServer ${WEBSERVER} ${LOG} ${FILEHANDLE} ${PATHHANDLE})
 
 # 连接线程库
 target_link_libraries(compileServer 
